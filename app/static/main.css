@@ -1,0 +1,54 @@
+body { 
+  padding-top: 1em; 
+}
+
+$green: rgba(33, 175, 75, 1);
+$red: rgba(255, 33, 33, 1);
+input {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  margin: 0 0 0.5rem;
+  border-radius: .25rem;
+  border: 1px solid rgba(200, 200, 200, 1);
+  
+  &[type="name"],
+  &[type="city"],
+  &[type="merketvalue"],
+  &[type="cost"]{
+      & + label {
+          position: absolute;
+          margin-top: -2.5rem;
+          margin-left: 1rem;
+          color: rgba(200, 200, 200, 1);
+          pointer-events: none;
+          width: 100%;
+          &::after {
+              position: absolute;
+              right: 2rem;
+              font-size: 1rem;
+          }
+      }
+
+      &:focus + label {
+          margin-top: -3.25rem;
+          font-size: .5rem;
+      }
+      &:not(:focus):not(:placeholder-shown) + label {
+          color: transparent;
+      }
+      &:valid + label::after {
+          content: '\2713';
+          color: $green;
+      }
+      
+      &:invalid:not(:placeholder-shown) + label::after {
+          content: '\2717';
+          color: $red;
+      }
+      
+      &:focus + label::after {
+          margin-top: .75rem;
+      }
+  }
+}

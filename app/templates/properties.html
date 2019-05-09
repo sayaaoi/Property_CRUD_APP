@@ -1,0 +1,178 @@
+{% extends 'layout.html' %}
+{% block body %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissable" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                        <span aria-hidden="true">x</span>
+                    </button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary pull-left" data-toggle="modal" data-target="#myModal">
+            Add a property
+    </button>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title pull-left" id="myModalLabel">Add new property</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>  
+            </div>
+        <div class="modal-body">
+            <form action="/" method="post">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <div class="form-group">
+                        {{ form.PropertyName.label(class="form-control-label")}}
+                        {{ form.PropertyName(class="form-control form-control",
+                        placeholder="e.g. Tower X", maxlength='20')}}
+                    </div>
+                    <div class="form-group">
+                        {{ form.City.label(class="form-control-label")}}
+                        {{ form.City(class="form-control form-control",placeholder="e.g. 500 Clark St", 
+                        id="city",maxlength='30')}}
+                    </div>
+                    <div class="form-group">
+                        {{ form.MarketValue.label(class="form-control-label")}}
+                        {{ form.MarketValue(type = "number", step="any", class="form-control form-control",
+                        placeholder="e.g. 800000", min="0")}}  
+                    </div>
+                    <div class="form-group">
+                        {{ form.Cost.label(class="form-control-label")}}
+                        {{ form.Cost(type = "number",step="any",class="form-control form-control",
+                        placeholder="e.g. 150000", min="0")}}
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    {{ form.Submit(class="btn btn-primary", type='submit')}}
+                </div>
+
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+</div>
+
+    <table cellpadding="10" cellspacing="0" class="display" id="table_id" style="width:100%">
+        <thead>
+            <tr>
+                <th scope="col">Property ID</th>
+                <th scope="col">Property Name</th>
+                <th scope="col">City</th>
+                <th scope="col">Market Value</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in all_properties %}
+            <tr class="odd gradeX">
+                <td>{{item.PropertyID}}</td>
+                <td>{{item.PropertyName}}</td>
+                <td>{{item.City}}</td>
+                <td>{{"${:,.0f}".format(item.MarketValue)}}</td>
+                <td>{{"${:,.0f}".format(item.Cost)}}</td>
+                <td>
+                    <a href="" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{ item.PropertyID }}">Edit</a>
+                    <a href="/delete/{{ item.PropertyID }}" class="btn btn-danger btn-xs" onclick="return confirm('Are You Sure To Delete?')">Delete</a>
+                </td>
+
+                <div id="modaledit{{ item.PropertyID }}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">        
+                            <div class="modal-header">
+                                <h4 class="modal-title">Update Property Information</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <div class="modal-body">
+                                <form action="/" method="POST">
+                                    <fieldset class="form-group">
+                                        <div class="form-group">
+                                            {{ form.PropertyID.label(class="form-control-label")}}
+                                            {{ form.PropertyID(readonly=true, class="form-control form-control", value=item.PropertyID)}}
+                                        </div>
+                                        <div class="form-group">
+                                            {{ form.PropertyName.label(class="form-control-label")}}
+                                            {{ form.PropertyName(class="form-control form-control", value=item.PropertyName)}}
+                                        </div>
+                                        <div class="form-group">
+                                            {{ form.City.label(class="form-control-label")}}
+                                            {{ form.City(class="form-control form-control", value=item.City)}}
+                                        </div>
+                                        <div class="form-group">
+                                            {{ form.MarketValue.label(class="form-control-label")}}
+                                            {{ form.MarketValue(type = "number",step="any",class="form-control form-control", value=item.MarketValue)}}
+                                        </div>
+                                        <div class="form-group">
+                                            {{ form.Cost.label(class="form-control-label")}}
+                                            {{ form.Cost(type = "number",step="any",class="form-control form-control", value=item.Cost)}}
+                                        </div>
+                                    </fieldset>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary" type="sbumit">Update</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>    
+                </div>              
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br><br>
+    <table class="table">
+        <tbody>
+            <tr>
+                <td><b>Total properties: </b></td>
+                <td>{{ num }} </td>
+            </tr>
+            <tr>
+                <td><b>Total Market Value: </b></td>
+                <td> {{ "${:,.0f}".format(total_mv[0][0]) }} </td>
+            </tr>
+            <tr>
+                <td><b>Total Cost: </b></td>
+                <td> {{ "${:,.0f}".format(total_cost[0][0]) }} </td>
+            </tr>
+            <tr>
+                <td><b>Total Profit & Loss: </b></td>
+                <td>{% if pl_result[0][0] >= 0 %}
+                        {{ "${:,.0f}".format(pl_result[0][0]) }}
+                    {% else %}
+                        {{ "-${:,.0f}".format(pl_result[0][0] | abs) }}
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+        
+    </table>
+
+{% endblock %}
+    
+{% block scripts %}
+<script>
+    $(document).ready( function () {
+        var oTable = $('#table_id').DataTable({
+            'searching':false,
+            'lengthMenu':[[5,10, -1],[5,10, "All"]],
+            'dom': '<f<t>ip>'
+        });
+    } );
+
+</script>
+{% endblock %}
