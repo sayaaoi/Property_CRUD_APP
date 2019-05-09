@@ -8,11 +8,11 @@ app = Flask(__name__)
 
 # Database
 SECRET_KEY = os.urandom(32)
-# app.config['SECRET_KEY'] = SECRET_KEY
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['SECRET_KEY'] = SECRET_KEY
 if os.environ.get('ENV') == 'production':
     app.config['DEBUG'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 else:
     app.config['DEBUG'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Database.db'
